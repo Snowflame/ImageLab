@@ -20,7 +20,6 @@
               <g
                 v-for="n in layerElements"
                 :key="n.id"
-                @mousedown="dragMouseDown($event, n)"
                 >
                 <rect :n="n" :is="n.comp">
                 </rect>
@@ -122,24 +121,6 @@ export default {
     DropList,
   },
   methods: {
-    dragMouseDown(event, element) {
-      event.preventDefault();
-      this.positions.clientX = event.clientX;
-      this.positions.clientY = event.clientY;
-      this.positions.element = element;
-      document.onmousemove = this.elementDrag;
-      document.onmouseup = this.closeDragElement;
-    },
-    elementDrag(event) {
-      event.preventDefault();
-      const { width, height } = this.positions.element;
-      const bodyRect = document.body.getBoundingClientRect();
-      const elemRect = this.$refs.svgLayer.getBoundingClientRect();
-      const offsetX = elemRect.left - bodyRect.left;
-      const offsetY = elemRect.top - bodyRect.top;
-      this.positions.element.x = event.clientX - (width / 2) - offsetX;
-      this.positions.element.y = event.clientY - (height / 2) - offsetY;
-    },
     onCopyDrop(e) {
       this.layerElements.push({
         id: uuid.v1(),
@@ -147,13 +128,10 @@ export default {
         width: e.data.width,
         height: e.data.height,
         name: e.data.name,
+        svg: this.$refs.svgLayer,
         x: 100,
         y: 100,
       });
-    },
-    closeDragElement() {
-      document.onmouseup = null;
-      document.onmousemove = null;
     },
     deleteElement(element) {
       const pos = this.layerElements.map((object) => (object.id)).indexOf(element.id);
