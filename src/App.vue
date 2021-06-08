@@ -39,7 +39,7 @@
                       <transition-group name="list" tag="div">
                         <drag
                           v-for="n in elements"
-                          :key="n" class="drag"
+                          :key="n.id" class="drag"
                           :data="n"
                           >{{n.comp.name}}</drag>
                       </transition-group>
@@ -69,7 +69,7 @@
                           </drag>
                         </template>
                         <template v-slot:feedback="{data}">
-                          <div class="item feedback" :key="data">{{data}}</div>
+                          <div class="item feedback" :key="item.id">{{data}}</div>
                         </template>
                       </drop-list>
                     </b-card-text>
@@ -95,6 +95,7 @@ export default {
       {
         comp: Rechteck,
         name: 'Unbenannt',
+        id: uuid.v1(),
         width: 50,
         height: 200,
       },
