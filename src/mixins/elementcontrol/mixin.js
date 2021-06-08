@@ -1,54 +1,4 @@
-<template>
-    <g>
-    <rect
-        :id="n.id"
-        :ref="n.id"
-        :x="n.x" :y="n.y"
-        :width="n.width"
-        :height="n.height"
-        style="fill:#000"
-        v-on:dblclick="showHelp"
-        @mousedown="dragMouseDown($event, n)"
-    ></rect>
-    <rect
-        :x="n.x-10" :y="n.y"
-        :width="3"
-        :height="n.height"
-        class="resize"
-        ref="HelperXL"
-        @mousedown="dragMouseDownXL($event, n.id)"
-    ></rect>
-    <rect
-        :x="n.x + n.width + 10" :y="n.y"
-        :width="3"
-        :height="n.height"
-        ref="HelperXR"
-        @mousedown="dragMouseDownXR($event, n.id)"
-        class="resize"
-    ></rect>
-    <rect
-        :x="n.x" :y="n.y - 10"
-        :width="n.width"
-        :height="3"
-        ref="HelperYT"
-        class="resize"
-        @mousedown="dragMouseDownYT($event, n.id)"
-    ></rect>
-    <rect
-        :x="n.x" :y="n.y + n.height + 10"
-        :width="n.width"
-        :height="3"
-        ref="HelperYB"
-        class="resize"
-        @mousedown="dragMouseDownYB($event, n.id)"
-    ></rect>
-  </g>
-</template>
-
-<script>
-export default {
-  props: ['n'],
-  name: 'svgElement',
+const ElementControls = {
   data: () => ({
     positions: {
       clientX: undefined,
@@ -159,14 +109,5 @@ export default {
     },
   },
 };
-</script>
 
-<style>
-  .resize {
-    fill: #999;
-  }
-  .resize:hover {
-    fill: #3d0;
-    cursor: nesw-resize;
-  }
-</style>
+export default ElementControls;

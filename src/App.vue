@@ -41,7 +41,7 @@
                           v-for="n in elements"
                           :key="n" class="drag"
                           :data="n"
-                          >{{n.name}}</drag>
+                          >{{n.comp.name}}</drag>
                       </transition-group>
                     </b-card-text>
                   </b-card-body>
@@ -63,7 +63,9 @@
                         <template v-slot:item="{item}">
                           <drag class="item" :key="item.id">
                             {{item.name}}
-                            <span @click="deleteElement(item)">delete</span>
+                            <span @click="deleteElement(item)" class="delete-layer">
+                              <b-icon-trash></b-icon-trash>
+                            </span>
                           </drag>
                         </template>
                         <template v-slot:feedback="{data}">
@@ -84,24 +86,17 @@
 <script>
 import { Drag, Drop, DropList } from 'vue-easy-dnd';
 import { uuid } from 'vue-uuid';
-import svgElement from './components/svgElement.vue';
-import svgElement2 from './components/svgElement2.vue';
+import Rechteck from './components/rechteck.vue';
 
 export default {
   name: 'App',
   data: () => ({
     elements: [
       {
-        comp: svgElement,
-        name: 'schwarz',
+        comp: Rechteck,
+        name: 'Unbenannt',
         width: 50,
         height: 200,
-      },
-      {
-        comp: svgElement2,
-        name: 'grau',
-        width: 100,
-        height: 150,
       },
     ],
     layerElements: [],
@@ -159,5 +154,11 @@ export default {
   width:1000px;
   height: 500px;
   border: 1px solid #000;
+}
+.delete-layer {
+  color: #ff0000;
+}
+.delete-layer:hover {
+  cursor: pointer;
 }
 </style>
