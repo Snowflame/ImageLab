@@ -10,19 +10,6 @@ const ElementControls = {
   }
   ),
   methods: {
-    toggleHelp(helper) {
-      if (helper.getAttribute('display') === 'none') {
-        helper.setAttribute('display', 'block');
-      } else {
-        helper.setAttribute('display', 'none');
-      }
-    },
-    showHelp() {
-      this.toggleHelp(this.$refs.HelperYB);
-      this.toggleHelp(this.$refs.HelperYT);
-      this.toggleHelp(this.$refs.HelperXL);
-      this.toggleHelp(this.$refs.HelperXR);
-    },
     dragMouseDownXR(event, id) {
       event.preventDefault();
       this.positions.clientX = event.clientX;
@@ -51,6 +38,13 @@ const ElementControls = {
       document.onmousemove = this.elementDragYB;
       document.onmouseup = this.closeDragElement;
     },
+    dragMouseDownResize(event, id) {
+      event.preventDefault();
+      this.positions.clientX = event.clientX;
+      this.positions.element = id;
+      document.onmousemove = this.elementDragResize;
+      document.onmouseup = this.closeDragElement;
+    },
     elementDragXR(event) {
       event.preventDefault();
       const bodyRect = document.body.getBoundingClientRect();
@@ -75,6 +69,17 @@ const ElementControls = {
       const offsetY = elemRect.top - bodyRect.top;
       const newHeight = ((event.clientY - offsetY) - this.n.y);
       this.n.height = newHeight;
+    },
+    elementDragResize(event) {
+      event.preventDefault();
+      const bodyRect = document.body.getBoundingClientRect();
+      const elemRect = this.n.svg.getBoundingClientRect();
+      const offsetY = elemRect.top - bodyRect.top;
+      const newHeight = ((event.clientY - offsetY) - this.n.y);
+      this.n.height = newHeight;
+      const offsetX = elemRect.left - bodyRect.left;
+      const newWidth = ((event.clientX - offsetX) - this.n.x);
+      this.n.width = newWidth;
     },
     elementDragYT(event) {
       event.preventDefault();

@@ -16,7 +16,13 @@
       <b-row>
         <b-col cols="8" class="text-center">
           <drop class="copy" @drop="onCopyDrop">
-            <svg width="1000" height="500" ref="svgLayer" class="svg-draw">
+            <svg
+              width="1000"
+              height="500"
+              ref="svgLayer"
+              class="svg-draw"
+              preserveAspectRatio="none"
+            >
               <g
                 v-for="n in layerElements"
                 :key="n.id"
@@ -68,9 +74,6 @@
                             </span>
                           </drag>
                         </template>
-                        <template v-slot:feedback="{data}">
-                          <div class="item feedback" :key="item.id">{{data}}</div>
-                        </template>
                       </drop-list>
                     </b-card-text>
                   </b-card-body>
@@ -87,17 +90,41 @@
 import { Drag, Drop, DropList } from 'vue-easy-dnd';
 import { uuid } from 'vue-uuid';
 import Rechteck from './components/rechteck.vue';
+import TextEL from './components/text.vue';
+import Circle from './components/circle.vue';
+import ImageEL from './components/image.vue';
 
 export default {
   name: 'App',
   data: () => ({
     elements: [
       {
+        comp: ImageEL,
+        name: 'Unbenannt',
+        id: uuid.v1(),
+        width: 200,
+        height: 300,
+      },
+      {
         comp: Rechteck,
         name: 'Unbenannt',
         id: uuid.v1(),
         width: 50,
         height: 200,
+      },
+      {
+        comp: TextEL,
+        name: 'Unbenannt',
+        id: uuid.v1(),
+        width: 200,
+        height: 25,
+      },
+      {
+        comp: Circle,
+        name: 'Unbenannt',
+        id: uuid.v1(),
+        width: 100,
+        height: 100,
       },
     ],
     layerElements: [],
@@ -125,8 +152,8 @@ export default {
         height: e.data.height,
         name: e.data.name,
         svg: this.$refs.svgLayer,
-        x: 100,
-        y: 100,
+        x: this.$refs.svgLayer.width.baseVal.value / 2 - e.data.width / 2,
+        y: this.$refs.svgLayer.height.baseVal.value / 2 - e.data.height / 2,
       });
     },
     deleteElement(element) {

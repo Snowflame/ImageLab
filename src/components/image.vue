@@ -1,15 +1,15 @@
 <template>
     <g>
-    <rect
+    <image
         :id="n.id"
         :ref="n.id"
         :x="n.x" :y="n.y"
         :width="n.width"
         :height="n.height"
-        style="fill:#000"
+        xlink:href="https://picsum.photos/200/300"
         class="drag"
         @mousedown="dragMouseDown($event, n)"
-    ></rect>
+    ></image>
     <ElementControlComp :n="n" :setpaddingside="10" :setpaddingtop="10"/>
   </g>
 </template>
@@ -20,7 +20,7 @@ import ElementControlComp from '../mixins/elementcontrol/comp.vue';
 
 export default {
   props: ['n'],
-  name: 'Rechteck',
+  name: 'Bild',
   components: { ElementControlComp },
   mixins: [ElementControl],
 };
