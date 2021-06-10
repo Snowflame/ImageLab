@@ -6,7 +6,7 @@
         :x="n.x" :y="n.y"
         :width="n.width"
         :height="n.height"
-        xlink:href="https://picsum.photos/200/300"
+        xlink:href="https://picsum.photos/1000/500"
         class="drag"
         @mousedown="dragMouseDown($event, n)"
         @dblclick="toggleHelp()"

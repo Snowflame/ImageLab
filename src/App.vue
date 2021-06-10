@@ -27,8 +27,9 @@
                 v-for="n in layerElements"
                 :key="n.id"
                 >
-                <rect :n="n" :is="n.comp">
-                </rect>
+                <g :n="n" :is="n.comp" @click="setSettings(n)"
+                :ref="n.id">
+                </g>
               </g>
             </svg>
           </drop>
@@ -56,6 +57,30 @@
 
               <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" role="tab">
+                  <b-button block v-b-toggle.accordion-3>Eigenschaften</b-button>
+                </b-card-header>
+                <b-collapse id="accordion-3" visible role="tabpanel">
+                  <b-card-body>
+                    <div v-for="setting in settings" :key="setting.id">
+                      <b-form-group :v-if="setting.type == 'text'"
+                        :label-for="setting.id"
+                        :label="setting.name"
+                      >
+                        <b-form-input
+                          :id="setting.id"
+                          type="text"
+                          :placeholder="setting.name"
+                          v-model="setting.value"
+                          @keyup="changeVal(setting.ref, setting.name, setting.value)"
+                        ></b-form-input>
+                      </b-form-group>
+                    </div>
+                  </b-card-body>
+                </b-collapse>
+              </b-card>
+
+              <b-card no-body class="mb-1">
+                <b-card-header header-tag="header" role="tab">
                   <b-button block v-b-toggle.accordion-2>Ebenen</b-button>
                 </b-card-header>
                 <b-collapse id="accordion-2" visible role="tabpanel">
@@ -68,7 +93,7 @@
                       >
                         <template v-slot:item="{item}">
                           <drag class="item" :key="item.id">
-                            {{item.name}}
+                            <span @click="setSettings(item)">{{item.name}}</span>
                             <span @click="deleteElement(item)" class="delete-layer">
                               <b-icon-trash></b-icon-trash>
                             </span>
@@ -135,6 +160,7 @@ export default {
         height: 100,
       },
     ],
+    settings: [],
     layerElements: [],
     cut: [],
     positions: {
@@ -163,6 +189,12 @@ export default {
         x: this.$refs.svgLayer.width.baseVal.value / 2 - e.data.width / 2,
         y: this.$refs.svgLayer.height.baseVal.value / 2 - e.data.height / 2,
       });
+    },
+    setSettings(element) {
+      this.settings = this.$refs[element.id][0].getSettings(element.id);
+    },
+    changeVal(ref, name, val) {
+      this.$refs[ref][0].changeVal(name, val);
     },
     deleteElement(element) {
       const pos = this.layerElements.map((object) => (object.id)).indexOf(element.id);
