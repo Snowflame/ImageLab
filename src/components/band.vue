@@ -1,22 +1,22 @@
 <template>
     <g>
-    <ellipse
+      <g
         :id="n.id"
         :ref="n.id"
-        :cx="n.x + n.width / 2" :cy="n.y + n.height / 2"
-        :rx="n.width"
-        :ry="n.height"
+        :x="n.x" :y="n.y"
+        :width="n.width"
+        :height="n.height"
         style="fill:#000"
         class="drag"
         @mousedown="dragMouseDown($event, n)"
-        @dblclick="toggleHelp()"
-    ></ellipse>
-    <ElementControlComp
-      ref="sizeHelper"
-      mode="c"
-      :n="n" :setpaddingside="n.width / 2 + 10"
-      :setpaddingtop="n.height / 2 + 10"
-    />
+        @dblclick="toggleHelp()">
+          <image
+            :x="n.x" :y="n.y"
+            :width="n.width"
+            href="../assets/band.svg"
+          />
+      </g>
+    <ElementControlComp ref="sizeHelper" :n="n" :setpaddingside="10" :setpaddingtop="10"/>
   </g>
 </template>
 
@@ -26,7 +26,7 @@ import ElementControlComp from '../mixins/elementcontrol/comp.vue';
 
 export default {
   props: ['n'],
-  name: 'Kreis',
+  name: 'Lohro Banderole',
   components: { ElementControlComp },
   mixins: [ElementControl],
   methods: {

@@ -9,8 +9,9 @@
         style="fill:#000"
         class="drag"
         @mousedown="dragMouseDown($event, n)"
+        @dblclick="toggleHelp()"
     ></rect>
-    <ElementControlComp :n="n" :setpaddingside="10" :setpaddingtop="10"/>
+    <ElementControlComp ref="sizeHelper" :n="n" :setpaddingside="10" :setpaddingtop="10"/>
   </g>
 </template>
 
@@ -23,5 +24,10 @@ export default {
   name: 'Rechteck',
   components: { ElementControlComp },
   mixins: [ElementControl],
+  methods: {
+    toggleHelp() {
+      this.$refs.sizeHelper.showHelp();
+    },
+  },
 };
 </script>

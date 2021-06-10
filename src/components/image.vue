@@ -9,8 +9,9 @@
         xlink:href="https://picsum.photos/200/300"
         class="drag"
         @mousedown="dragMouseDown($event, n)"
+        @dblclick="toggleHelp()"
     ></image>
-    <ElementControlComp :n="n" :setpaddingside="10" :setpaddingtop="10"/>
+    <ElementControlComp ref="sizeHelper" :n="n" :setpaddingside="10" :setpaddingtop="10"/>
   </g>
 </template>
 
@@ -23,5 +24,10 @@ export default {
   name: 'Bild',
   components: { ElementControlComp },
   mixins: [ElementControl],
+  methods: {
+    toggleHelp() {
+      this.$refs.sizeHelper.showHelp();
+    },
+  },
 };
 </script>

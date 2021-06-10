@@ -38,6 +38,7 @@
         <rect
             :x="n.x + n.width + parseInt(setpaddingside)" :y="n.y + n.height + 2"
             :width="3"
+            ref="ResizeY"
             :height="getHeight()"
         ></rect>
         <rect
@@ -45,6 +46,7 @@
             :y="n.y + n.height + parseInt(setpaddingtop)"
             :width="getWidth()"
             :height="3"
+            ref="ResizeX"
         ></rect>
       </g>
     </g>

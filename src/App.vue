@@ -93,6 +93,7 @@ import Rechteck from './components/rechteck.vue';
 import TextEL from './components/text.vue';
 import Circle from './components/circle.vue';
 import ImageEL from './components/image.vue';
+import Band from './components/band.vue';
 
 export default {
   name: 'App',
@@ -104,6 +105,13 @@ export default {
         id: uuid.v1(),
         width: 200,
         height: 300,
+      },
+      {
+        comp: Band,
+        name: 'Unbenannt',
+        id: uuid.v1(),
+        width: 400,
+        height: 100,
       },
       {
         comp: Rechteck,
@@ -164,7 +172,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
