@@ -5,6 +5,7 @@ import './registerServiceWorker';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+import 'verte/dist/verte.css';
 
 Vue.config.productionTip = false;
 

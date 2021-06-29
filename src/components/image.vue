@@ -6,7 +6,7 @@
         :x="n.x" :y="n.y"
         :width="n.width"
         :height="n.height"
-        xlink:href="https://picsum.photos/1000/500"
+        :xlink:href="settings.value"
         class="drag"
         @mousedown="dragMouseDown($event, n)"
         @dblclick="toggleHelp()"
@@ -24,9 +24,27 @@ export default {
   name: 'Bild',
   components: { ElementControlComp },
   mixins: [ElementControl],
+  data: () => ({
+    settings: {
+      value: 'Banderole',
+    },
+  }
+  ),
   methods: {
     toggleHelp() {
       this.$refs.sizeHelper.showHelp();
+    },
+    getSettings(ref) {
+      return [{
+        id: '13337',
+        name: 'Datei',
+        type: 'file',
+        value: '',
+        ref,
+      }];
+    },
+    changeVal(name, value) {
+      this.settings.value = value;
     },
   },
 };

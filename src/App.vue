@@ -62,7 +62,7 @@
                 <b-collapse id="accordion-3" visible role="tabpanel">
                   <b-card-body>
                     <div v-for="setting in settings" :key="setting.id">
-                      <b-form-group :v-if="setting.type == 'text'"
+                      <b-form-group v-if="setting.type == 'text'"
                         :label-for="setting.id"
                         :label="setting.name"
                       >
@@ -73,6 +73,22 @@
                           v-model="setting.value"
                           @keyup="changeVal(setting.ref, setting.name, setting.value)"
                         ></b-form-input>
+                      </b-form-group>
+                      <b-form-group v-if="setting.type == 'file'"
+                        :label-for="setting.id"
+                        :label="setting.name"
+                      >
+                        <input type="file"
+                          @change="changeFile(setting.ref, setting.name, $event.target.files[0])"/>
+                      </b-form-group>
+                      <b-form-group v-if="setting.type == 'color'"
+                        :label-for="setting.id"
+                        :label="setting.name"
+                      >
+                      <Sketch
+                        :value="color"
+                        @input="changeColor($event, setting.ref, setting.name)"
+                      ></Sketch>
                       </b-form-group>
                     </div>
                   </b-card-body>
@@ -114,6 +130,7 @@
 <script>
 import { Drag, Drop, DropList } from 'vue-easy-dnd';
 import { uuid } from 'vue-uuid';
+import { Sketch } from 'vue-color';
 import Rechteck from './components/rechteck.vue';
 import TextEL from './components/text.vue';
 import Circle from './components/circle.vue';
@@ -123,6 +140,7 @@ import Band from './components/band.vue';
 export default {
   name: 'App',
   data: () => ({
+    color: '#000',
     elements: [
       {
         comp: ImageEL,
@@ -176,6 +194,7 @@ export default {
     Drag,
     Drop,
     DropList,
+    Sketch,
   },
   methods: {
     onCopyDrop(e) {
@@ -194,6 +213,16 @@ export default {
       this.settings = this.$refs[element.id][0].getSettings(element.id);
     },
     changeVal(ref, name, val) {
+      this.$refs[ref][0].changeVal(name, val);
+    },
+    changeFile(ref, name, value) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.$refs[ref][0].changeVal(name, e.target.result);
+      };
+      reader.readAsDataURL(value);
+    },
+    changeColor(val, ref, name) {
       this.$refs[ref][0].changeVal(name, val);
     },
     deleteElement(element) {
