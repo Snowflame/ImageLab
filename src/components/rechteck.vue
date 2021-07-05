@@ -9,7 +9,6 @@
         style="fill:#000000"
         class="drag"
         @mousedown="dragMouseDown($event, n)"
-        @dblclick="toggleHelp()"
     ></rect>
     <ElementControlComp ref="sizeHelper" :n="n" :setpaddingside="10" :setpaddingtop="10"/>
   </g>
@@ -33,15 +32,18 @@ export default {
   }
   ),
   methods: {
-    toggleHelp() {
+    showHelp() {
       this.$refs.sizeHelper.showHelp();
+    },
+    hideHelp() {
+      this.$refs.sizeHelper.hideHelp();
     },
     getSettings(ref) {
       return [{
         id: '13337',
         name: 'Farbe',
         type: 'color',
-        value: '',
+        value: this.$refs[this.recref].style.fill,
         ref,
       }];
     },

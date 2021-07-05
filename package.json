@@ -10,8 +10,12 @@
   "dependencies": {
     "bootstrap": "^5.0.1",
     "bootstrap-vue": "^2.21.2",
+    "canvg": "^3.0.7",
+    "convert-svg-to-png": "^0.5.0",
     "core-js": "^3.6.5",
+    "jimp": "^0.16.1",
     "register-service-worker": "^1.7.1",
+    "sharp": "^0.28.3",
     "verte": "0.0.12",
     "vue": "^2.6.13",
     "vue-accessible-color-picker": "^3.0.0",
@@ -19,7 +23,8 @@
     "vue-color-kit": "^1.0.5",
     "vue-easy-dnd": "^1.10.2",
     "vue-uuid": "^2.0.2",
-    "vuedraggable": "^2.24.3"
+    "vuedraggable": "^2.24.3",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

@@ -1,11 +1,12 @@
 <template>
-    <g>
+    <g v-if="$store.showResize">
       <rect
           :x="n.x - parseInt(setpaddingside)" :y="n.y"
           :width="3"
           :height="n.height"
           class="resize"
           ref="HelperXL"
+          v-if="HelperXL"
           @mousedown="dragMouseDownXL($event, n.id)"
       ></rect>
       <rect
@@ -13,6 +14,7 @@
           :width="3"
           :height="n.height"
           ref="HelperXR"
+          v-if="HelperXR"
           @mousedown="dragMouseDownXR($event, n.id)"
           class="resize"
       ></rect>
@@ -22,6 +24,7 @@
           :height="3"
           ref="HelperYT"
           class="resize"
+          v-if="HelperYT"
           @mousedown="dragMouseDownYT($event, n.id)"
       ></rect>
       <rect
@@ -30,6 +33,7 @@
           :height="3"
           ref="HelperYB"
           class="resize"
+          v-if="HelperYB"
           @mousedown="dragMouseDownYB($event, n.id)"
       ></rect>
       <g
@@ -39,6 +43,7 @@
             :x="n.x + n.width + parseInt(setpaddingside)" :y="n.y + n.height + 2"
             :width="3"
             ref="ResizeY"
+            v-if="ResizeY"
             :height="getHeight()"
         ></rect>
         <rect
@@ -47,6 +52,7 @@
             :width="getWidth()"
             :height="3"
             ref="ResizeX"
+            v-if="ResizeX"
         ></rect>
       </g>
     </g>

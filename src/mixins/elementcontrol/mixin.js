@@ -7,23 +7,30 @@ const ElementControls = {
       movementY: 0,
       el: undefined,
     },
+    HelperXL: false,
+    HelperYB: false,
+    HelperYT: false,
+    HelperXR: false,
+    ResizeX: false,
+    ResizeY: false,
   }
   ),
   methods: {
-    toggleHelp(helper) {
-      if (helper.getAttribute('display') === 'none') {
-        helper.setAttribute('display', 'block');
-      } else {
-        helper.setAttribute('display', 'none');
-      }
-    },
     showHelp() {
-      this.toggleHelp(this.$refs.HelperYB);
-      this.toggleHelp(this.$refs.HelperYT);
-      this.toggleHelp(this.$refs.HelperXL);
-      this.toggleHelp(this.$refs.HelperXR);
-      this.toggleHelp(this.$refs.ResizeX);
-      this.toggleHelp(this.$refs.ResizeY);
+      this.HelperXL = true;
+      this.HelperYB = true;
+      this.HelperYT = true;
+      this.HelperXR = true;
+      this.ResizeX = true;
+      this.ResizeY = true;
+    },
+    hideHelp() {
+      this.HelperXL = false;
+      this.HelperYB = false;
+      this.HelperYT = false;
+      this.HelperXR = false;
+      this.ResizeX = false;
+      this.ResizeY = false;
     },
     dragMouseDownXR(event, id) {
       event.preventDefault();

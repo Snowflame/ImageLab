@@ -7,9 +7,9 @@
         :width="n.width"
         :height="n.height"
         :xlink:href="settings.value"
+        type="text/png"
         class="drag"
         @mousedown="dragMouseDown($event, n)"
-        @dblclick="toggleHelp()"
     ></image>
     <ElementControlComp ref="sizeHelper" :n="n" :setpaddingside="10" :setpaddingtop="10"/>
   </g>
@@ -31,8 +31,11 @@ export default {
   }
   ),
   methods: {
-    toggleHelp() {
+    showHelp() {
       this.$refs.sizeHelper.showHelp();
+    },
+    hideHelp() {
+      this.$refs.sizeHelper.hideHelp();
     },
     getSettings(ref) {
       return [{
