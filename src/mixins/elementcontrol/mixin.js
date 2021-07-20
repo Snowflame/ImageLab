@@ -38,6 +38,8 @@ const ElementControls = {
       this.positions.element = id;
       document.onmousemove = this.elementDragXR;
       document.onmouseup = this.closeDragElement;
+      document.ontouchstart = this.elementDragXR;
+      document.ontouchend = this.closeDragElement;
     },
     dragMouseDownXL(event, id) {
       event.preventDefault();
@@ -45,6 +47,8 @@ const ElementControls = {
       this.positions.element = id;
       document.onmousemove = this.elementDragXL;
       document.onmouseup = this.closeDragElement;
+      document.ontouchstart = this.elementDragXL;
+      document.ontouchend = this.closeDragElement;
     },
     dragMouseDownYT(event, id) {
       event.preventDefault();
@@ -52,6 +56,8 @@ const ElementControls = {
       this.positions.element = id;
       document.onmousemove = this.elementDragYT;
       document.onmouseup = this.closeDragElement;
+      document.ontouchstart = this.elementDragYT;
+      document.ontouchend = this.closeDragElement;
     },
     dragMouseDownYB(event, id) {
       event.preventDefault();
@@ -59,6 +65,8 @@ const ElementControls = {
       this.positions.element = id;
       document.onmousemove = this.elementDragYB;
       document.onmouseup = this.closeDragElement;
+      document.ontouchstart = this.elementDragYB;
+      document.ontouchend = this.closeDragElement;
     },
     dragMouseDownResize(event, id) {
       event.preventDefault();
@@ -66,93 +74,116 @@ const ElementControls = {
       this.positions.element = id;
       document.onmousemove = this.elementDragResize;
       document.onmouseup = this.closeDragElement;
+      document.ontouchstart = this.elementDragResize;
+      document.ontouchend = this.closeDragElement;
     },
     elementDragXR(event) {
       event.preventDefault();
       const bodyRect = document.body.getBoundingClientRect();
       const elemRect = this.n.svg.getBoundingClientRect();
       const offsetX = elemRect.left - bodyRect.left;
-      const newWidth = ((event.clientX - offsetX) - this.n.x);
+      const mouseX = event.clientX * (100 / this.$store.scalework);
+      const newWidth = ((mouseX - offsetX) - this.n.x);
       if (newWidth > 0) {
         this.n.width = newWidth;
       } else {
         this.n.width = 1;
       }
+      this.$actions.changeSize(this.n.width, this.n.height);
     },
     elementDragXL(event) {
       event.preventDefault();
       const bodyRect = document.body.getBoundingClientRect();
       const elemRect = this.n.svg.getBoundingClientRect();
       const offsetX = elemRect.left - bodyRect.left;
-      const newWidth = (this.n.x - (event.clientX - offsetX)) + this.n.width;
-      this.n.x = event.clientX - offsetX;
+      const mouseX = event.clientX * (100 / this.$store.scalework);
+      const newWidth = (this.n.x - (mouseX - offsetX)) + this.n.width;
+      this.n.x = mouseX - offsetX;
       if (newWidth > 0) {
         this.n.width = newWidth;
       } else {
         this.n.width = 1;
       }
+      this.$actions.changePostion(this.n.x, this.n.y);
+      this.$actions.changeSize(this.n.width, this.n.height);
     },
     elementDragYB(event) {
       event.preventDefault();
       const bodyRect = document.body.getBoundingClientRect();
       const elemRect = this.n.svg.getBoundingClientRect();
       const offsetY = elemRect.top - bodyRect.top;
-      const newHeight = ((event.clientY - offsetY) - this.n.y);
+      const mouseY = event.clientY * (100 / this.$store.scalework);
+      const newHeight = ((mouseY - offsetY) - this.n.y);
       if (newHeight > 0) {
         this.n.height = newHeight;
       } else {
         this.n.height = 1;
       }
+      this.$actions.changeSize(this.n.width, this.n.height);
     },
     elementDragResize(event) {
       event.preventDefault();
       const bodyRect = document.body.getBoundingClientRect();
       const elemRect = this.n.svg.getBoundingClientRect();
       const offsetY = elemRect.top - bodyRect.top;
-      const newHeight = ((event.clientY - offsetY) - this.n.y);
+      const mouseY = event.clientY * (100 / this.$store.scalework);
+      const newHeight = ((mouseY - offsetY) - this.n.y);
       if (newHeight > 0) {
         this.n.height = newHeight;
       } else {
         this.n.height = 1;
       }
+      const mouseX = event.clientX * (100 / this.$store.scalework);
       const offsetX = elemRect.left - bodyRect.left;
-      const newWidth = ((event.clientX - offsetX) - this.n.x);
+      const newWidth = ((mouseX - offsetX) - this.n.x);
       if (newWidth > 0) {
         this.n.width = newWidth;
       } else {
         this.n.width = 1;
       }
+      this.$actions.changeSize(this.n.width, this.n.height);
     },
     elementDragYT(event) {
       event.preventDefault();
       const bodyRect = document.body.getBoundingClientRect();
       const elemRect = this.n.svg.getBoundingClientRect();
       const offsetY = elemRect.top - bodyRect.top;
-      const newHeight = (this.n.y - (event.clientY - offsetY)) + this.n.height;
-      this.n.y = event.clientY - offsetY;
+      const mouseY = event.clientY * (100 / this.$store.scalework);
+      const newHeight = (this.n.y - (mouseY - offsetY)) + this.n.height;
+      this.n.y = mouseY - offsetY;
       this.n.height = newHeight;
       if (newHeight > 0) {
         this.n.height = newHeight;
       } else {
         this.n.height = 1;
       }
+      this.$actions.changePostion(this.n.x, this.n.y);
+      this.$actions.changeSize(this.n.width, this.n.height);
     },
     elementDragMove(event) {
       event.preventDefault();
-      this.n.x = (event.clientX + this.positions.clientX);
-      this.n.y = (event.clientY + this.positions.clientY);
+      const mouseX = event.clientX * (100 / this.$store.scalework);
+      const mouseY = event.clientY * (100 / this.$store.scalework);
+      this.n.x = mouseX + this.positions.clientX;
+      this.n.y = mouseY + this.positions.clientY;
+      this.$actions.changePostion(this.n.x, this.n.y);
     },
     dragMouseDown(event, element) {
       event.preventDefault();
-      this.positions.clientX = this.n.x - event.clientX;
-      this.positions.clientY = this.n.y - event.clientY;
+      const mouseX = event.clientX * (100 / this.$store.scalework);
+      const mouseY = event.clientY * (100 / this.$store.scalework);
+      this.positions.clientX = this.n.x - mouseX;
+      this.positions.clientY = this.n.y - mouseY;
       this.positions.element = element;
+      this.$actions.changePostion(this.n.x, this.n.y);
       document.onmousemove = this.elementDragMove;
       document.onmouseup = this.closeDragElement;
     },
     closeDragElement() {
       document.onmouseup = null;
       document.onmousemove = null;
+      document.ontouchstart = null;
+      document.ontouchend = null;
     },
   },
 };

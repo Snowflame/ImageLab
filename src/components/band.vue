@@ -8,12 +8,15 @@
         height="140"
         style="fill:#000"
         class="drag"
-        @mousedown="dragMouseDown($event, n)">
+        @mousedown="dragMouseDown($event, n)"
+        @touch:start="dragMouseDown($event, n)"
+        >
           <!-- eslint-disable -->
           <svg id="group1" 
             :x="n.x" :y="n.y"
             :width="n.width"
-            :height="n.height">
+            :height="n.height"
+            style="transform: scale(-1, 1); transform-origin:center">
             <rect x="60" y="30" :width="n.width - 60" height="90"/>
             <rect x="40" y="20" style="fill:none;stroke:#FFFFFF;stroke-width:3;stroke-miterlimit:10;" :width="n.width - 50" height="90"/>
             <g id="layer1" transform="translate(-36.285713,-124.94062)">
@@ -103,7 +106,13 @@ export default {
         id: '13337',
         name: 'text',
         type: 'text',
-        value: 'Banderole',
+        value: this.settings.value,
+        ref,
+      }, {
+        id: '13338',
+        name: 'Postion X',
+        type: 'text',
+        value: this.n.x,
         ref,
       }];
     },

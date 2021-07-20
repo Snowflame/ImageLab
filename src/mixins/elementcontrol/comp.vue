@@ -2,7 +2,7 @@
     <g v-if="$store.showResize">
       <rect
           :x="n.x - parseInt(setpaddingside)" :y="n.y"
-          :width="3"
+          :width="3 + Math.ceil(5-$store.scalework/100)"
           :height="n.height"
           class="resize"
           ref="HelperXL"
@@ -11,7 +11,7 @@
       ></rect>
       <rect
           :x="n.x + n.width + parseInt(setpaddingside)" :y="n.y"
-          :width="3"
+          :width="3 + Math.ceil(5-$store.scalework/100)"
           :height="n.height"
           ref="HelperXR"
           v-if="HelperXR"
@@ -21,7 +21,7 @@
       <rect
           :x="n.x" :y="n.y - parseInt(setpaddingtop)"
           :width="n.width"
-          :height="3"
+          :height="3 + Math.ceil(5-$store.scalework/100)"
           ref="HelperYT"
           class="resize"
           v-if="HelperYT"
@@ -30,7 +30,7 @@
       <rect
           :x="n.x" :y="n.y + n.height + parseInt(setpaddingtop)"
           :width="n.width"
-          :height="3"
+          :height="3 + Math.ceil(5-$store.scalework/100)"
           ref="HelperYB"
           class="resize"
           v-if="HelperYB"
@@ -40,17 +40,18 @@
       class="resize corner"
       @mousedown="dragMouseDownResize($event, n.id)">
         <rect
-            :x="n.x + n.width + parseInt(setpaddingside)" :y="n.y + n.height + 2"
-            :width="3"
+            :x="n.x + n.width + parseInt(setpaddingside)"
+            :y="n.y + n.height + 2"
+            :width="3 + Math.ceil(5-$store.scalework/100)"
             ref="ResizeY"
             v-if="ResizeY"
-            :height="getHeight()"
+            :height="getHeight() + Math.ceil(5-$store.scalework/100)"
         ></rect>
         <rect
             :x="n.x + n.width + 2"
             :y="n.y + n.height + parseInt(setpaddingtop)"
-            :width="getWidth()"
-            :height="3"
+            :width="getWidth() + Math.ceil(5-$store.scalework/100)"
+            :height="3 + Math.ceil(5-$store.scalework/100)"
             ref="ResizeX"
             v-if="ResizeX"
         ></rect>

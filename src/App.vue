@@ -7,6 +7,7 @@
 
           <b-nav-item-dropdown text="Datei" right>
             <b-dropdown-item v-on:click="shownew = !shownew">Neu</b-dropdown-item>
+            <b-dropdown-item v-on:click="showsave = !showsave">speichern / laden</b-dropdown-item>
             <b-dropdown-item v-on:click="showexport = !showexport">exportieren</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -54,19 +55,44 @@
           <b-col>
             <b-col lg="1" class="pb-1">
               <b-button v-on:click="convertSVG()" variant="primary">SVG</b-button>
+              <b-button v-on:click="convertPNG()" variant="primary">PNG</b-button>
               <b-button @click="showexport = !showexport">schließen</b-button>
             </b-col>
           </b-col>
-          <b-col><img v-if="png" :src="png" height="150" style="max-width:300px"/></b-col>
           <b-col>
-            <a :href="png" v-if="png" download="imagelab.svg" class="button">download SVG</a>
+            <img v-if="svgexport" :src="svgexport" height="150" style="max-width:300px"/>
+            <img v-if="pngexport" :src="pngexport" height="150" style="max-width:300px"/>
+          </b-col>
+          <b-col>
+            <a :href="svgexport" v-if="svgexport" download="imagelab.svg" class="button">
+              download SVG
+            </a>
+            <a :href="pngexport" v-if="pngexport" download="imagelab.png" class="button">
+              download PNG
+            </a>
           </b-col>
         </b-row>
       </b-card>
     </b-overlay>
-    <b-container class="workspace" fluid>
+    <b-overlay v-if="showsave">
+      <b-card title="Datei speichern / laden">
+        <b-row>
+          <b-col>
+            <b-col lg="1" class="pb-1">
+              <b-button v-on:click="convertJSON()" variant="primary">speichern</b-button>
+              <input type="file" @change="loadJSON($event.target.files[0])"/>
+              <b-button @click="showsave = !showsave">schließen</b-button>
+            </b-col>
+            <b-col>
+              <a :href="json" v-if="json" download="file.json" class="button">download Datei</a>
+            </b-col>
+          </b-col>
+        </b-row>
+      </b-card>
+    </b-overlay>
+    <b-container fluid>
       <b-row>
-        <b-col cols="8" class="text-center">
+        <b-col cols="8" class="workspace">
           <drop class="copy" @drop="onCopyDrop">
             <svg
               :width="svg.x"
@@ -75,7 +101,19 @@
               class="svg-draw"
               preserveAspectRatio="none"
               id="svg"
+              :style="{
+                scale: $store.scalework/100,
+                borderWidth: `${Math.ceil(3-$store.scalework/100)}px`
+              }"
             >
+              <rect
+                  :width="svg.x"
+                  :height="svg.y"
+                  x="0"
+                  y="0"
+                  style="fill:transparent"
+                  @mousedown="deactiveElement()"
+              ></rect>
               <g
                 v-for="n in layerElements.slice().reverse()"
                 :key="n.id"
@@ -90,6 +128,21 @@
         </b-col>
         <b-col cols="4">
             <div class="accordion" role="tablist">
+              <b-card no-body class="mb-1">
+                <b-card-header header-tag="header" role="tab">
+                  <b-button block v-b-toggle.accordion-1>Arbeitsbereich</b-button>
+                </b-card-header>
+                <b-collapse id="accordion-1" visible role="tabpanel">
+                  <b-card-body>
+                    <b-card-text>
+                        <input type="range" min="25" max="200"
+                          :value="$store.scalework"
+                          @input="changeScale($event)">
+                    </b-card-text>
+                  </b-card-body>
+                </b-collapse>
+              </b-card>
+
               <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" role="tab">
                   <b-button block v-b-toggle.accordion-1>Elemente</b-button>
@@ -109,12 +162,56 @@
                 </b-collapse>
               </b-card>
 
-              <b-card no-body class="mb-1">
+              <b-card no-body class="mb-1" v-if="settingsTab">
                 <b-card-header header-tag="header" role="tab">
                   <b-button block v-b-toggle.accordion-3>Eigenschaften</b-button>
                 </b-card-header>
                 <b-collapse id="accordion-3" visible role="tabpanel">
                   <b-card-body>
+                    <b-form-group
+                      label-for="posx"
+                      label="Postion X"
+                    >
+                      <b-form-input
+                        id="posx"
+                        type="text"
+                        v-model="$store.aktiveElement.x"
+                        @keyup="changeBasic('x', $store.aktiveElement.x)"
+                      ></b-form-input>
+                    </b-form-group>
+                    <b-form-group
+                      label-for="posy"
+                      label="Postion Y"
+                    >
+                      <b-form-input
+                        id="posy"
+                        type="text"
+                        v-model="$store.aktiveElement.y"
+                        @keyup="changeBasic('y', $store.aktiveElement.y)"
+                      ></b-form-input>
+                    </b-form-group>
+                    <b-form-group
+                      label-for="awidth"
+                      label="Breite"
+                    >
+                      <b-form-input
+                        id="awidth"
+                        type="text"
+                        v-model="$store.aktiveElement.width"
+                        @keyup="changeBasic('width', $store.aktiveElement.width)"
+                      ></b-form-input>
+                    </b-form-group>
+                    <b-form-group
+                      label-for="aheight"
+                      label="Höhe"
+                    >
+                      <b-form-input
+                        id="aheight"
+                        type="text"
+                        v-model="$store.aktiveElement.height"
+                        @keyup="changeBasic('height', $store.aktiveElement.height)"
+                      ></b-form-input>
+                    </b-form-group>
                     <div v-for="setting in settings" :key="setting.id">
                       <b-form-group v-if="setting.type == 'text'"
                         :label-for="setting.id"
@@ -123,7 +220,6 @@
                         <b-form-input
                           :id="setting.id"
                           type="text"
-                          :placeholder="setting.name"
                           v-model="setting.value"
                           @keyup="changeVal(setting.ref, setting.name, setting.value)"
                         ></b-form-input>
@@ -214,6 +310,7 @@ import Vue from 'vue';
 import { Drag, Drop, DropList } from 'vue-easy-dnd';
 import { uuid } from 'vue-uuid';
 import { Sketch } from 'vue-color';
+import domtoimage from 'dom-to-image';
 import Rechteck from './components/rechteck.vue';
 import TextEL from './components/text.vue';
 import Circle from './components/circle.vue';
@@ -226,9 +323,13 @@ export default {
     color: '#000',
     showexport: false,
     shownew: false,
+    showsave: false,
+    settingsTab: false,
     newFile: { x: 1200, y: 1200 },
     svg: { x: 1200, y: 1200 },
-    png: '',
+    pngexport: '',
+    svgexport: '',
+    json: null,
     elements: [
       {
         comp: ImageEL,
@@ -273,14 +374,8 @@ export default {
     ],
     settings: [],
     layerElements: [],
+    activeElement: null,
     cut: [],
-    positions: {
-      clientX: undefined,
-      clientY: undefined,
-      movementX: 0,
-      movementY: 0,
-      el: undefined,
-    },
   }
   ),
   components: {
@@ -290,6 +385,9 @@ export default {
     Sketch,
   },
   methods: {
+    changeScale(e) {
+      this.$actions.changeScale(e.target.value);
+    },
     createNew() {
       this.layerElements = [];
       this.svg = this.newFile;
@@ -317,16 +415,72 @@ export default {
       Vue.nextTick(() => {
         const s = new XMLSerializer().serializeToString(this.$refs.svgLayer);
         const encodedData = window.btoa(s);
-        this.png = `data:image/svg+xml;base64,${encodedData}`;
+        this.svgexport = `data:image/svg+xml;base64,${encodedData}`;
         this.$actions.toggleResize();
       });
+    },
+    convertPNG() {
+      this.$actions.toggleResize();
+      domtoimage.toPng(this.$refs.svgLayer)
+        .then((dataUrl) => {
+          this.pngexport = dataUrl;
+          this.$actions.toggleResize();
+        })
+        .catch(() => {
+          alert('oops, something went wrong!');
+          this.$actions.toggleResize();
+        });
+    },
+    convertJSON() {
+      const jsonsave = [];
+      for (let index = 0; index < this.layerElements.length; index += 1) {
+        const element = this.layerElements[index];
+        element.settings = this.$refs[element.id][0].getSettings(element.id);
+        jsonsave.push(element);
+      }
+      this.json = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(jsonsave))}`;
+    },
+    loadJSON(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const importJSON = JSON.parse(e.target.result);
+        for (let index = 0; index < importJSON.length; index += 1) {
+          const element = importJSON[index];
+          const el = this.elements.filter((item) => item.name === element.name);
+          this.layerElements.push({
+            id: uuid.v1(),
+            comp: el[0].comp,
+            width: element.width,
+            height: element.height,
+            name: element.name,
+            base: el[0].base,
+            svg: this.$refs.svgLayer,
+            x: element.x,
+            y: element.y,
+          });
+        }
+      };
+      reader.readAsText(file);
     },
     setSettings(element) {
       for (let i = 0; i < this.layerElements.length; i += 1) {
         this.$refs[this.layerElements[i].id][0].hideHelp();
       }
       this.$refs[element.id][0].showHelp();
+      this.activeElement = element.id;
       this.settings = this.$refs[element.id][0].getSettings(element.id);
+      this.$actions.changePostion(element.x, element.y);
+      this.$actions.changeSize(element.width, element.height);
+      this.settingsTab = true;
+    },
+    deactiveElement() {
+      for (let i = 0; i < this.layerElements.length; i += 1) {
+        this.$refs[this.layerElements[i].id][0].hideHelp();
+      }
+      this.settingsTab = false;
+    },
+    changeBasic(name, val) {
+      this.$refs[this.activeElement][0].n[name] = parseInt(val, 10);
     },
     changeVal(ref, name, val) {
       this.$refs[ref][0].changeVal(name, val);
@@ -365,6 +519,7 @@ export default {
 }
 .svg-draw {
   border: 1px solid #000;
+  transform-origin: top left;
 }
 .delete-layer {
   color: #ff0000;
@@ -385,5 +540,8 @@ export default {
   background-position: center;
   border: 1px solid #000;
   margin-right: 15px;
+}
+.workspace {
+  overflow: scroll;
 }
 </style>

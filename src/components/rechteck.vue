@@ -48,7 +48,8 @@ export default {
       }];
     },
     changeVal(name, value) {
-      this.$refs[this.recref].style.fill = `rgba(${value.rgba.r},${value.rgba.g},${value.rgba.b},${value.rgba.a})`;
+      this.$refs[this.recref].style.fill = `rgb(${value.rgba.r},${value.rgba.g},${value.rgba.b})`;
+      this.$refs[this.recref].setAttribute('fill-opacity', value.rgba.a);
     },
   },
 };
