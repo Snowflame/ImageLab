@@ -1,22 +1,22 @@
 <template>
-    <g>
+    <g
+        :transform="`rotate(${this.rotate})`"
+        :transform-origin="`${n.x + (n.width/2)} ${n.y + (n.height/2)}`">
       <g
         :id="n.id"
         :ref="n.id"
-        :x="n.x" :y="n.y"
         :width="n.width"
+        :transform="`translate(${n.x}, ${n.y})`"
         height="140"
-        style="fill:#000"
         class="drag"
         @mousedown="dragMouseDown($event, n)"
         @touch:start="dragMouseDown($event, n)"
         >
           <!-- eslint-disable -->
           <svg id="group1" 
-            :x="n.x" :y="n.y"
             :width="n.width"
             :height="n.height"
-            style="transform: scale(-1, 1); transform-origin:center">
+            :transform="`scale(${this.sx}, ${this.sy}) translate(${this.mirror.x ? `-${this.n.width}` : '0'}, ${this.mirror.y ? `-${this.n.height}` : '0'})`">
             <rect x="60" y="30" :width="n.width - 60" height="90"/>
             <rect x="40" y="20" style="fill:none;stroke:#FFFFFF;stroke-width:3;stroke-miterlimit:10;" :width="n.width - 50" height="90"/>
             <g id="layer1" transform="translate(-36.285713,-124.94062)">
@@ -75,19 +75,19 @@
             <text x="180" y="80" style="fill:#FFFFFF;font-family:'Prompt'; font-weight: 600;font-size:25px;">{{settings.value}}</text>
           </svg>
       </g>
-    <ElementControlComp ref="sizeHelper" :n="n" :setpaddingside="10" :setpaddingtop="10"/>
+    <ElementControlComp ref="sizeHelper" :n="n" :setpaddingside="10" :setpaddingtop="10" :lockEL="lockEL"/>
   </g>
 </template>
 
 <script>
-import ElementControl from '../mixins/elementcontrol/mixin';
+import ElementMove from '../mixins/elementmove/mixin';
 import ElementControlComp from '../mixins/elementcontrol/comp.vue';
 
 export default {
-  props: ['n'],
+  props: ['n', 'svg'],
   name: 'LohroBanderole',
   components: { ElementControlComp },
-  mixins: [ElementControl],
+  mixins: [ElementMove],
   data: () => ({
     settings: {
       value: 'Banderole',
@@ -95,24 +95,12 @@ export default {
   }
   ),
   methods: {
-    showHelp() {
-      this.$refs.sizeHelper.showHelp();
-    },
-    hideHelp() {
-      this.$refs.sizeHelper.hideHelp();
-    },
     getSettings(ref) {
       return [{
         id: '13337',
         name: 'text',
         type: 'text',
         value: this.settings.value,
-        ref,
-      }, {
-        id: '13338',
-        name: 'Postion X',
-        type: 'text',
-        value: this.n.x,
         ref,
       }];
     },

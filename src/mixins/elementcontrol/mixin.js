@@ -32,51 +32,6 @@ const ElementControls = {
       this.ResizeX = false;
       this.ResizeY = false;
     },
-    dragMouseDownXR(event, id) {
-      event.preventDefault();
-      this.positions.clientX = event.clientX;
-      this.positions.element = id;
-      document.onmousemove = this.elementDragXR;
-      document.onmouseup = this.closeDragElement;
-      document.ontouchstart = this.elementDragXR;
-      document.ontouchend = this.closeDragElement;
-    },
-    dragMouseDownXL(event, id) {
-      event.preventDefault();
-      this.positions.clientX = event.clientX;
-      this.positions.element = id;
-      document.onmousemove = this.elementDragXL;
-      document.onmouseup = this.closeDragElement;
-      document.ontouchstart = this.elementDragXL;
-      document.ontouchend = this.closeDragElement;
-    },
-    dragMouseDownYT(event, id) {
-      event.preventDefault();
-      this.positions.clientX = event.clientX;
-      this.positions.element = id;
-      document.onmousemove = this.elementDragYT;
-      document.onmouseup = this.closeDragElement;
-      document.ontouchstart = this.elementDragYT;
-      document.ontouchend = this.closeDragElement;
-    },
-    dragMouseDownYB(event, id) {
-      event.preventDefault();
-      this.positions.clientX = event.clientX;
-      this.positions.element = id;
-      document.onmousemove = this.elementDragYB;
-      document.onmouseup = this.closeDragElement;
-      document.ontouchstart = this.elementDragYB;
-      document.ontouchend = this.closeDragElement;
-    },
-    dragMouseDownResize(event, id) {
-      event.preventDefault();
-      this.positions.clientX = event.clientX;
-      this.positions.element = id;
-      document.onmousemove = this.elementDragResize;
-      document.onmouseup = this.closeDragElement;
-      document.ontouchstart = this.elementDragResize;
-      document.ontouchend = this.closeDragElement;
-    },
     elementDragXR(event) {
       event.preventDefault();
       const bodyRect = document.body.getBoundingClientRect();
@@ -160,24 +115,60 @@ const ElementControls = {
       this.$actions.changePostion(this.n.x, this.n.y);
       this.$actions.changeSize(this.n.width, this.n.height);
     },
-    elementDragMove(event) {
+    dragMouseDownXR(event, id) {
       event.preventDefault();
-      const mouseX = event.clientX * (100 / this.$store.scalework);
-      const mouseY = event.clientY * (100 / this.$store.scalework);
-      this.n.x = mouseX + this.positions.clientX;
-      this.n.y = mouseY + this.positions.clientY;
-      this.$actions.changePostion(this.n.x, this.n.y);
+      if (!this.lockEL) {
+        this.positions.clientX = event.clientX;
+        this.positions.element = id;
+        document.onmousemove = this.elementDragXR;
+        document.onmouseup = this.closeDragElement;
+        document.ontouchstart = this.elementDragXR;
+        document.ontouchend = this.closeDragElement;
+      }
     },
-    dragMouseDown(event, element) {
+    dragMouseDownXL(event, id) {
       event.preventDefault();
-      const mouseX = event.clientX * (100 / this.$store.scalework);
-      const mouseY = event.clientY * (100 / this.$store.scalework);
-      this.positions.clientX = this.n.x - mouseX;
-      this.positions.clientY = this.n.y - mouseY;
-      this.positions.element = element;
-      this.$actions.changePostion(this.n.x, this.n.y);
-      document.onmousemove = this.elementDragMove;
-      document.onmouseup = this.closeDragElement;
+      if (!this.lockEL) {
+        this.positions.clientX = event.clientX;
+        this.positions.element = id;
+        document.onmousemove = this.elementDragXL;
+        document.onmouseup = this.closeDragElement;
+        document.ontouchstart = this.elementDragXL;
+        document.ontouchend = this.closeDragElement;
+      }
+    },
+    dragMouseDownYT(event, id) {
+      event.preventDefault();
+      if (!this.lockEL) {
+        this.positions.clientX = event.clientX;
+        this.positions.element = id;
+        document.onmousemove = this.elementDragYT;
+        document.onmouseup = this.closeDragElement;
+        document.ontouchstart = this.elementDragYT;
+        document.ontouchend = this.closeDragElement;
+      }
+    },
+    dragMouseDownYB(event, id) {
+      event.preventDefault();
+      if (!this.lockEL) {
+        this.positions.clientX = event.clientX;
+        this.positions.element = id;
+        document.onmousemove = this.elementDragYB;
+        document.onmouseup = this.closeDragElement;
+        document.ontouchstart = this.elementDragYB;
+        document.ontouchend = this.closeDragElement;
+      }
+    },
+    dragMouseDownResize(event, id) {
+      event.preventDefault();
+      if (!this.lockEL) {
+        this.positions.clientX = event.clientX;
+        this.positions.element = id;
+        document.onmousemove = this.elementDragResize;
+        document.onmouseup = this.closeDragElement;
+        document.ontouchstart = this.elementDragResize;
+        document.ontouchend = this.closeDragElement;
+      }
     },
     closeDragElement() {
       document.onmouseup = null;

@@ -3,12 +3,12 @@
     <rect
         :id="n.id"
         :ref="recref"
-        :x="n.x" :y="n.y"
         :width="n.width"
         :height="n.height"
         style="fill:#000000"
         class="drag"
         @mousedown="dragMouseDown($event, n)"
+        :transform="`translate(${n.x}, ${n.y}) rotate(${this.rotate})`"
     ></rect>
     <ElementControlComp ref="sizeHelper" :n="n" :setpaddingside="10" :setpaddingtop="10"/>
   </g>
@@ -16,14 +16,14 @@
 
 <script>
 import { uuid } from 'vue-uuid';
-import ElementControl from '../mixins/elementcontrol/mixin';
+import ElementMove from '../mixins/elementmove/mixin';
 import ElementControlComp from '../mixins/elementcontrol/comp.vue';
 
 export default {
   props: ['n'],
   name: 'Rechteck',
   components: { ElementControlComp },
-  mixins: [ElementControl],
+  mixins: [ElementMove],
   data: () => ({
     settings: {
       value: 'Banderole',

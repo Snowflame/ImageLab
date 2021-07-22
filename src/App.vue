@@ -119,7 +119,7 @@
                 :key="n.id"
                 @click="setSettings(n)"
                 >
-                <g :n="n" :is="n.comp"
+                <g :n="n" :is="n.comp" :svg="svg"
                 :ref="n.id">
                 </g>
               </g>
@@ -212,6 +212,30 @@
                         @keyup="changeBasic('height', $store.aktiveElement.height)"
                       ></b-form-input>
                     </b-form-group>
+                    <b-form-group
+                      label-for="rotate"
+                      label="drehen"
+                    >
+                      <b-form-input
+                        id="rotate"
+                        type="text"
+                        v-model="rotate"
+                        @keyup="changeRotate()"
+                      ></b-form-input>
+                        <input type="range" min="0" max="360"
+                        v-model="rotate"
+                        @input="changeRotate()">
+                    </b-form-group>
+                    <b-button @click="mirror('x')"
+                    :variant="this.$refs[this.activeElement][0].mirror.x ? 'primary':''"
+                    >spiegeln x</b-button>
+                    <b-button @click="mirror('y')"
+                    :variant="this.$refs[this.activeElement][0].mirror.y ? 'primary':''"
+                    >spiegeln y</b-button>
+                    <b-button @click="lockEL()"
+                    :variant="this.$refs[this.activeElement][0].lockEL ? 'primary':''"
+                    >lock
+                    </b-button>
                     <div v-for="setting in settings" :key="setting.id">
                       <b-form-group v-if="setting.type == 'text'"
                         :label-for="setting.id"
@@ -376,6 +400,7 @@ export default {
     layerElements: [],
     activeElement: null,
     cut: [],
+    rotate: 0,
   }
   ),
   components: {
@@ -471,6 +496,7 @@ export default {
       this.settings = this.$refs[element.id][0].getSettings(element.id);
       this.$actions.changePostion(element.x, element.y);
       this.$actions.changeSize(element.width, element.height);
+      this.rotate = this.$refs[element.id][0].rotate;
       this.settingsTab = true;
     },
     deactiveElement() {
@@ -481,6 +507,19 @@ export default {
     },
     changeBasic(name, val) {
       this.$refs[this.activeElement][0].n[name] = parseInt(val, 10);
+    },
+    changeRotate() {
+      this.$refs[this.activeElement][0].rotate = this.rotate;
+    },
+    mirror(direction) {
+      if (direction === 'x') {
+        this.$refs[this.activeElement][0].mirrorX();
+      } else {
+        this.$refs[this.activeElement][0].mirrorY();
+      }
+    },
+    lockEL() {
+      this.$refs[this.activeElement][0].lockElement();
     },
     changeVal(ref, name, val) {
       this.$refs[ref][0].changeVal(name, val);
