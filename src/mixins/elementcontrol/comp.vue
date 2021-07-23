@@ -1,5 +1,5 @@
 <template>
-    <g v-if="$store.showResize"
+    <g v-if="$store.showResize && showHelpElements"
       >
       <rect
           :x="n.x - parseInt(setpaddingside)" :y="n.y"
@@ -64,7 +64,25 @@
 import ElementControl from './mixin';
 
 export default {
-  props: ['n', 'setpaddingside', 'setpaddingtop', 'mode', 'lockEL'],
+  props: {
+    n: {
+      type: Object,
+    },
+    setpaddingside: {
+      type: Number,
+    },
+    setpaddingtop: {
+      type: Number,
+    },
+    mode: {
+    },
+    lockEL: {
+      type: Boolean,
+    },
+    showHelpElements: {
+      default: true,
+    },
+  },
   name: 'svgElementControl',
   mixins: [ElementControl],
   methods: {

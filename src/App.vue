@@ -384,7 +384,7 @@ export default {
         name: 'Text',
         id: uuid.v1(),
         width: 200,
-        height: 25,
+        height: 24,
         base: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtdi0zNmEzZmIwYz0iIiB3aWR0aD0iMTAwMCIgaGVpZ2h0PSI1MDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIGlkPSJzdmciIGNsYXNzPSJzdmctZHJhdyI+PGcgZGF0YS12LTM2YTNmYjBjPSIiPjxnIGRhdGEtdi0zNmEzZmIwYz0iIj48dGV4dCB4PSIzMzIiIHk9IjI1Mi41IiBpZD0iZjZiYTc3MTAtZGRiMC0xMWViLTliOTQtMzc3YTcyYzk0ZWNhIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjI1IiBzdHlsZT0iZm9udC1zaXplOiA1MHB4OyBmb250LWZhbWlseTogUHJvbXB0OyI+IEJlaXNwaWVsdGV4dCA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=',
       },
       {

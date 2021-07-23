@@ -6,7 +6,6 @@
         :id="n.id"
         :ref="n.id"
         :width="n.width"
-        :transform="`translate(${n.x}, ${n.y})`"
         height="140"
         class="drag"
         @mousedown="dragMouseDown($event, n)"
@@ -16,6 +15,8 @@
           <svg id="group1" 
             :width="n.width"
             :height="n.height"
+            :x="n.x" :y="n.y"
+            :transform-origin="`${n.x} ${n.y}`"
             :transform="`scale(${this.sx}, ${this.sy}) translate(${this.mirror.x ? `-${this.n.width}` : '0'}, ${this.mirror.y ? `-${this.n.height}` : '0'})`">
             <rect x="60" y="30" :width="n.width - 60" height="90"/>
             <rect x="40" y="20" style="fill:none;stroke:#FFFFFF;stroke-width:3;stroke-miterlimit:10;" :width="n.width - 50" height="90"/>

@@ -1,14 +1,21 @@
 <template>
-    <g>
+    <g
+        :transform="`rotate(${this.rotate})`"
+        :transform-origin="`${n.x + (n.width/2)} ${n.y + (n.height/2)}`">
     <rect
         :id="n.id"
         :ref="recref"
         :width="n.width"
         :height="n.height"
+        :x="n.x" :y="n.y"
         style="fill:#000000"
+        :transform-origin="`${n.x} ${n.y}`"
         class="drag"
         @mousedown="dragMouseDown($event, n)"
-        :transform="`translate(${n.x}, ${n.y}) rotate(${this.rotate})`"
+        :transform="`
+        scale(${this.sx}, ${this.sy})
+        translate(${this.mirror.x ? `-${this.n.width}` : '0'},
+        ${this.mirror.y ? `-${this.n.height}` : '0'})`"
     ></rect>
     <ElementControlComp ref="sizeHelper" :n="n" :setpaddingside="10" :setpaddingtop="10"/>
   </g>
