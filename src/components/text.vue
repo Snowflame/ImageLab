@@ -23,6 +23,7 @@
       :n="n"
       :setpaddingside="20"
       :setpaddingtop="20"
+      :rotate="rotate"
       :showHelpElements="false"/>
   </g>
 </template>

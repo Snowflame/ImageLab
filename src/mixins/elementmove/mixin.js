@@ -56,6 +56,8 @@ const ElementControls = {
       }
     },
     closeDragElement() {
+      this.widthOrigin = this.n.width;
+      this.heightOrigin = this.n.height;
       document.onmouseup = null;
       document.onmousemove = null;
       document.ontouchstart = null;

@@ -32,13 +32,29 @@ const ElementControls = {
       this.ResizeX = false;
       this.ResizeY = false;
     },
-    elementDragXR(event) {
-      event.preventDefault();
-      const bodyRect = document.body.getBoundingClientRect();
-      const elemRect = this.n.svg.getBoundingClientRect();
-      const offsetX = elemRect.left - bodyRect.left;
+    calcRad(degree) {
+      const pi = degree / 180;
+      return pi * Math.PI;
+    },
+    deltaMouse(origin, live) {
+      const deltaX = live.x - origin.x;
+      const deltaY = live.y - origin.y;
+      return { x: deltaX, y: deltaY };
+    },
+    getMousePos(event) {
       const mouseX = event.clientX * (100 / this.$store.scalework);
-      const newWidth = ((mouseX - offsetX) - this.n.x);
+      const mouseY = event.clientY * (100 / this.$store.scalework);
+      return { x: mouseX, y: mouseY };
+    },
+    elementDragXR(event) {
+      const mouse = this.getMousePos(event);
+      const deltaMousePostion = this.deltaMouse(this.OriginMouse, { x: mouse.x, y: mouse.y });
+      const diffLengthX = (deltaMousePostion.x * Math.cos(this.calcRad(this.rotate))
+      + (deltaMousePostion.y * Math.sin(this.calcRad(this.rotate))));
+      const newWidth = this.OriginWidth + diffLengthX;
+      const newX = this.OriginPosition.x - ((diffLengthX / 2)
+      * Math.sin(this.calcRad(this.rotate)));
+      this.n.x = newX;
       if (newWidth > 0) {
         this.n.width = newWidth;
       } else {
@@ -47,13 +63,13 @@ const ElementControls = {
       this.$actions.changeSize(this.n.width, this.n.height);
     },
     elementDragXL(event) {
-      event.preventDefault();
-      const bodyRect = document.body.getBoundingClientRect();
-      const elemRect = this.n.svg.getBoundingClientRect();
-      const offsetX = elemRect.left - bodyRect.left;
-      const mouseX = event.clientX * (100 / this.$store.scalework);
-      const newWidth = (this.n.x - (mouseX - offsetX)) + this.n.width;
-      this.n.x = mouseX - offsetX;
+      const mouse = this.getMousePos(event);
+      const deltaMousePostion = this.deltaMouse(this.OriginMouse, { x: mouse.x, y: mouse.y });
+      const diffLengthX = (deltaMousePostion.x * Math.cos(this.calcRad(this.rotate))
+      + (deltaMousePostion.y * Math.sin(this.calcRad(this.rotate))));
+      const newWidth = this.OriginWidth - (diffLengthX / 2);
+      const newX = this.OriginPosition.x + (diffLengthX / 2);
+      this.n.x = newX;
       if (newWidth > 0) {
         this.n.width = newWidth;
       } else {
@@ -63,12 +79,11 @@ const ElementControls = {
       this.$actions.changeSize(this.n.width, this.n.height);
     },
     elementDragYB(event) {
-      event.preventDefault();
-      const bodyRect = document.body.getBoundingClientRect();
-      const elemRect = this.n.svg.getBoundingClientRect();
-      const offsetY = elemRect.top - bodyRect.top;
-      const mouseY = event.clientY * (100 / this.$store.scalework);
-      const newHeight = ((mouseY - offsetY) - this.n.y);
+      const mouse = this.getMousePos(event);
+      const deltaMousePostion = this.deltaMouse(this.OriginMouse, { x: mouse.x, y: mouse.y });
+      const diffLengthY = (deltaMousePostion.x * Math.sin(this.calcRad(this.rotate))
+      - (deltaMousePostion.y * Math.cos(this.calcRad(this.rotate))));
+      const newHeight = this.OriginHeight - (diffLengthY / 2);
       if (newHeight > 0) {
         this.n.height = newHeight;
       } else {
@@ -77,20 +92,19 @@ const ElementControls = {
       this.$actions.changeSize(this.n.width, this.n.height);
     },
     elementDragResize(event) {
-      event.preventDefault();
-      const bodyRect = document.body.getBoundingClientRect();
-      const elemRect = this.n.svg.getBoundingClientRect();
-      const offsetY = elemRect.top - bodyRect.top;
-      const mouseY = event.clientY * (100 / this.$store.scalework);
-      const newHeight = ((mouseY - offsetY) - this.n.y);
+      const mouse = this.getMousePos(event);
+      const deltaMousePostion = this.deltaMouse(this.OriginMouse, { x: mouse.x, y: mouse.y });
+      const diffLengthY = (deltaMousePostion.x * Math.sin(this.calcRad(this.rotate))
+      - (deltaMousePostion.y * Math.cos(this.calcRad(this.rotate))));
+      const newHeight = this.OriginHeight - (diffLengthY / 2);
       if (newHeight > 0) {
         this.n.height = newHeight;
       } else {
         this.n.height = 1;
       }
-      const mouseX = event.clientX * (100 / this.$store.scalework);
-      const offsetX = elemRect.left - bodyRect.left;
-      const newWidth = ((mouseX - offsetX) - this.n.x);
+      const diffLengthX = (deltaMousePostion.x * Math.cos(this.calcRad(this.rotate))
+      + (deltaMousePostion.y * Math.sin(this.calcRad(this.rotate))));
+      const newWidth = this.OriginWidth + diffLengthX;
       if (newWidth > 0) {
         this.n.width = newWidth;
       } else {
@@ -99,14 +113,13 @@ const ElementControls = {
       this.$actions.changeSize(this.n.width, this.n.height);
     },
     elementDragYT(event) {
-      event.preventDefault();
-      const bodyRect = document.body.getBoundingClientRect();
-      const elemRect = this.n.svg.getBoundingClientRect();
-      const offsetY = elemRect.top - bodyRect.top;
-      const mouseY = event.clientY * (100 / this.$store.scalework);
-      const newHeight = (this.n.y - (mouseY - offsetY)) + this.n.height;
-      this.n.y = mouseY - offsetY;
-      this.n.height = newHeight;
+      const mouse = this.getMousePos(event);
+      const deltaMousePostion = this.deltaMouse(this.OriginMouse, { x: mouse.x, y: mouse.y });
+      const diffLengthY = (deltaMousePostion.x * Math.sin(this.calcRad(this.rotate))
+      - (deltaMousePostion.y * Math.cos(this.calcRad(this.rotate))));
+      const newHeight = this.OriginHeight + (diffLengthY / 2);
+      const newY = this.OriginPosition.y - (diffLengthY / 2);
+      this.n.y = newY;
       if (newHeight > 0) {
         this.n.height = newHeight;
       } else {
@@ -120,6 +133,10 @@ const ElementControls = {
       if (!this.lockEL) {
         this.positions.clientX = event.clientX;
         this.positions.element = id;
+        this.OriginWidth = this.n.width;
+        this.OriginHeight = this.n.height;
+        this.OriginMouse = { x: event.clientX, y: event.clientY };
+        this.OriginPosition = { x: this.n.x, y: this.n.y };
         document.onmousemove = this.elementDragXR;
         document.onmouseup = this.closeDragElement;
         document.ontouchstart = this.elementDragXR;
@@ -131,6 +148,12 @@ const ElementControls = {
       if (!this.lockEL) {
         this.positions.clientX = event.clientX;
         this.positions.element = id;
+        this.positions.clientX = event.clientX;
+        this.positions.element = id;
+        this.OriginWidth = this.n.width;
+        this.OriginHeight = this.n.height;
+        this.OriginMouse = { x: event.clientX, y: event.clientY };
+        this.OriginPosition = { x: this.n.x, y: this.n.y };
         document.onmousemove = this.elementDragXL;
         document.onmouseup = this.closeDragElement;
         document.ontouchstart = this.elementDragXL;
@@ -142,6 +165,12 @@ const ElementControls = {
       if (!this.lockEL) {
         this.positions.clientX = event.clientX;
         this.positions.element = id;
+        this.positions.clientX = event.clientX;
+        this.positions.element = id;
+        this.OriginWidth = this.n.width;
+        this.OriginHeight = this.n.height;
+        this.OriginMouse = { x: event.clientX, y: event.clientY };
+        this.OriginPosition = { x: this.n.x, y: this.n.y };
         document.onmousemove = this.elementDragYT;
         document.onmouseup = this.closeDragElement;
         document.ontouchstart = this.elementDragYT;
@@ -153,6 +182,10 @@ const ElementControls = {
       if (!this.lockEL) {
         this.positions.clientX = event.clientX;
         this.positions.element = id;
+        this.OriginWidth = this.n.width;
+        this.OriginHeight = this.n.height;
+        this.OriginMouse = { x: event.clientX, y: event.clientY };
+        this.OriginPosition = { x: this.n.x, y: this.n.y };
         document.onmousemove = this.elementDragYB;
         document.onmouseup = this.closeDragElement;
         document.ontouchstart = this.elementDragYB;
@@ -164,6 +197,12 @@ const ElementControls = {
       if (!this.lockEL) {
         this.positions.clientX = event.clientX;
         this.positions.element = id;
+        this.positions.clientX = event.clientX;
+        this.positions.element = id;
+        this.OriginWidth = this.n.width;
+        this.OriginHeight = this.n.height;
+        this.OriginMouse = { x: event.clientX, y: event.clientY };
+        this.OriginPosition = { x: this.n.x, y: this.n.y };
         document.onmousemove = this.elementDragResize;
         document.onmouseup = this.closeDragElement;
         document.ontouchstart = this.elementDragResize;
@@ -171,6 +210,10 @@ const ElementControls = {
       }
     },
     closeDragElement() {
+      this.widthOrigin = this.n.width;
+      this.XOrigin = this.n.x;
+      this.heightOrigin = this.n.height;
+      this.YOrigin = this.n.y;
       document.onmouseup = null;
       document.onmousemove = null;
       document.ontouchstart = null;

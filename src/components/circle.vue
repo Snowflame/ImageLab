@@ -20,6 +20,7 @@
     <ElementControlComp
       ref="sizeHelper"
       mode="c"
+      :rotate="rotate"
       :n="n" :setpaddingside="n.width / 2 + 10"
       :setpaddingtop="n.height / 2 + 10"
     />

@@ -1,23 +1,27 @@
 <template>
     <g
         :transform="`rotate(${this.rotate})`"
-        :transform-origin="`${n.x + (n.width/2)} ${n.y + (n.height/2)}`">
+        :transform-origin="`${n.x + (n.width/2)}
+        ${n.y + (n.height/2)}`">
       <g
         :id="n.id"
         :ref="n.id"
         :width="n.width"
-        height="140"
         class="drag"
         @mousedown="dragMouseDown($event, n)"
         @touch:start="dragMouseDown($event, n)"
         >
+      <g>
           <!-- eslint-disable -->
           <svg id="group1" 
             :width="n.width"
             :height="n.height"
             :x="n.x" :y="n.y"
             :transform-origin="`${n.x} ${n.y}`"
-            :transform="`scale(${this.sx}, ${this.sy}) translate(${this.mirror.x ? `-${this.n.width}` : '0'}, ${this.mirror.y ? `-${this.n.height}` : '0'})`">
+            :transform="`
+            scale(${this.sx}, ${this.sy})
+            translate(${this.mirror.x ? `-${this.n.width}` : '0'},
+            ${this.mirror.y ? `-${this.n.height}` : '0'})`">
             <rect x="60" y="30" :width="n.width - 60" height="90"/>
             <rect x="40" y="20" style="fill:none;stroke:#FFFFFF;stroke-width:3;stroke-miterlimit:10;" :width="n.width - 50" height="90"/>
             <g id="layer1" transform="translate(-36.285713,-124.94062)">
@@ -75,8 +79,9 @@
             </g>
             <text x="180" y="80" style="fill:#FFFFFF;font-family:'Prompt'; font-weight: 600;font-size:25px;">{{settings.value}}</text>
           </svg>
+          </g>
       </g>
-    <ElementControlComp ref="sizeHelper" :n="n" :setpaddingside="10" :setpaddingtop="10" :lockEL="lockEL"/>
+    <ElementControlComp ref="sizeHelper" :rotate="rotate":n="n" :setpaddingside="10" :setpaddingtop="10" :lockEL="lockEL"/>
   </g>
 </template>
 
@@ -93,6 +98,10 @@ export default {
     settings: {
       value: 'Banderole',
     },
+    heightOrigin: 0,
+    widthOrigin: 0,
+    XOrigin: 0,
+    YOrigin: 0,
   }
   ),
   methods: {
@@ -107,6 +116,7 @@ export default {
     },
     changeVal(name, value) {
       this.settings.value = value;
+      return value;
     },
   },
 };

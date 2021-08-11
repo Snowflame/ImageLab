@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Logo",
+    "settings": [
+      {
+        "name": "Bla",
+        "type": "text",
+        "value": "Example",
+        "logic": "this.infotext = `Was los ${settings.Bla.split(' ', ',')}?`;"
+      },
+      {
+        "name": "Bla2",
+        "type": "color",
+        "value": "#000",
+        "logic": "this.logocolor = `fill: rgb(${settings.Bla2.rgba.r},${settings.Bla2.rgba.g},${settings.Bla2.rgba.b})`;"
+      }
+    ],
+    "data": "<rect width='200' :height='n.height' :style='logocolor' :x='n.x' :y='n.y'><text>{{infotext}}</text></rect>"
+  }
+]

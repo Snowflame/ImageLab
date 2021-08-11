@@ -68,6 +68,9 @@ export default {
     n: {
       type: Object,
     },
+    rotate: {
+      type: Number,
+    },
     setpaddingside: {
       type: Number,
     },
@@ -76,6 +79,7 @@ export default {
     },
     mode: {
     },
+    changeTransform: {},
     lockEL: {
       type: Boolean,
     },

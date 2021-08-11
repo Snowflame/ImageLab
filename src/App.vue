@@ -3,12 +3,15 @@
     <div>
       <b-navbar>
         <b-navbar-nav>
-          <b-nav-item href="#">Home</b-nav-item>
-
           <b-nav-item-dropdown text="Datei" right>
             <b-dropdown-item v-on:click="shownew = !shownew">Neu</b-dropdown-item>
-            <b-dropdown-item v-on:click="showsave = !showsave">speichern / laden</b-dropdown-item>
-            <b-dropdown-item v-on:click="showexport = !showexport">exportieren</b-dropdown-item>
+            <b-dropdown-item v-on:click="showsave = !showsave">speichern</b-dropdown-item>
+            <b-dropdown-item v-on:click="showload = !showload">laden</b-dropdown-item>
+          </b-nav-item-dropdown>
+
+          <b-nav-item-dropdown text="exportieren" right>
+            <b-dropdown-item v-on:click="showexportPNG = !showexportPNG">PNG</b-dropdown-item>
+            <b-dropdown-item v-on:click="showexportSVG = !showexportSVG">SVG</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-navbar>
@@ -49,24 +52,19 @@
         </div>
       </b-card>
     </b-overlay>
-    <b-overlay v-if="showexport">
-      <b-card title="Datei exportieren">
+    <b-overlay v-if="showexportPNG">
+      <b-card title="PNG exportieren">
         <b-row>
           <b-col>
             <b-col lg="1" class="pb-1">
-              <b-button v-on:click="convertSVG()" variant="primary">SVG</b-button>
-              <b-button v-on:click="convertPNG()" variant="primary">PNG</b-button>
-              <b-button @click="showexport = !showexport">schließen</b-button>
+              <b-button v-on:click="convertPNG()" variant="primary">exportieren</b-button>
+              <b-button @click="showexportPNG = !showexportPNG">schließen</b-button>
             </b-col>
           </b-col>
           <b-col>
-            <img v-if="svgexport" :src="svgexport" height="150" style="max-width:300px"/>
             <img v-if="pngexport" :src="pngexport" height="150" style="max-width:300px"/>
           </b-col>
           <b-col>
-            <a :href="svgexport" v-if="svgexport" download="imagelab.svg" class="button">
-              download SVG
-            </a>
             <a :href="pngexport" v-if="pngexport" download="imagelab.png" class="button">
               download PNG
             </a>
@@ -74,19 +72,74 @@
         </b-row>
       </b-card>
     </b-overlay>
-    <b-overlay v-if="showsave">
-      <b-card title="Datei speichern / laden">
+    <b-overlay v-if="showexportSVG">
+      <b-card title="SVG exportieren">
         <b-row>
           <b-col>
             <b-col lg="1" class="pb-1">
-              <b-button v-on:click="convertJSON()" variant="primary">speichern</b-button>
-              <input type="file" @change="loadJSON($event.target.files[0])"/>
-              <b-button @click="showsave = !showsave">schließen</b-button>
-            </b-col>
-            <b-col>
-              <a :href="json" v-if="json" download="file.json" class="button">download Datei</a>
+              <b-button v-on:click="convertSVG()" variant="primary">exportieren</b-button>
+              <b-button @click="showexportSVG = !showexportSVG">schließen</b-button>
             </b-col>
           </b-col>
+          <b-col>
+            <img v-if="svgexport" :src="svgexport" height="150" style="max-width:300px"/>
+          </b-col>
+          <b-col>
+            <a :href="svgexport" v-if="svgexport" download="imagelab.svg" class="button">
+              download SVG
+            </a>
+          </b-col>
+        </b-row>
+      </b-card>
+    </b-overlay>
+    <b-overlay v-if="showsave">
+      <b-card title="speichern">
+        <b-row>
+            <b-col sm="12" class="pb-1">
+              <b-form-group
+                label-for="saveName"
+                label="Name"
+              >
+              <b-form-input
+                id="saveName"
+                type="text"
+                v-model="savename"
+              ></b-form-input>
+              </b-form-group>
+              <b-button v-on:click="convertJSON()" variant="primary">speichern</b-button>
+              <a :href="`data:text/json;charset=utf-8,${json}`" v-if="json"
+              :download="`${savename}.json`"
+              class="btn btn-secondary primary"
+              >download</a>
+              <b-button v-on:click="uploadJSON()" v-if="json">upload</b-button>
+              <span v-if="uploaded">hochgeladen!</span>
+            </b-col>
+            <b-col sm="12" class="pb-1">
+              <b-button @click="showsave = !showsave">schließen</b-button>
+            </b-col>
+        </b-row>
+      </b-card>
+    </b-overlay>
+    <b-overlay v-if="showload">
+      <b-card title="laden">
+        <b-row>
+            <b-col sm="12" class="pb-1">
+              <input type="file" @change="loadJSON($event.target.files[0])"/>
+              <b-button v-b-modal.cloudspeicher @click="loadFileList()">Cloudspeicher</b-button>
+              <b-modal id="cloudspeicher" title="Cloudspeicher">
+                <b-list-group>
+                  <b-list-group-item button
+                    v-for="file in fileList"
+                    :key="file"
+                    @click="loadFile(file); $bvModal.hide('cloudspeicher')">
+                    {{file}}
+                  </b-list-group-item>
+                </b-list-group>
+              </b-modal>
+            </b-col>
+            <b-col sm="12" class="pb-1">
+              <b-button @click="showload = !showload">schließen</b-button>
+            </b-col>
         </b-row>
       </b-card>
     </b-overlay>
@@ -135,8 +188,15 @@
                 <b-collapse id="accordion-1" visible role="tabpanel">
                   <b-card-body>
                     <b-card-text>
+                      <b-form-input
+                        id="rotate"
+                        type="number"
+                        v-model="$store.scalework"
+                        @keyup="changeScale($event)"
+                      ></b-form-input>
                         <input type="range" min="25" max="200"
                           :value="$store.scalework"
+                          style="width:100%"
                           @input="changeScale($event)">
                     </b-card-text>
                   </b-card-body>
@@ -162,134 +222,7 @@
                 </b-collapse>
               </b-card>
 
-              <b-card no-body class="mb-1" v-if="settingsTab">
-                <b-card-header header-tag="header" role="tab">
-                  <b-button block v-b-toggle.accordion-3>Eigenschaften</b-button>
-                </b-card-header>
-                <b-collapse id="accordion-3" visible role="tabpanel">
-                  <b-card-body>
-                    <b-form-group
-                      label-for="posx"
-                      label="Postion X"
-                    >
-                      <b-form-input
-                        id="posx"
-                        type="text"
-                        v-model="$store.aktiveElement.x"
-                        @keyup="changeBasic('x', $store.aktiveElement.x)"
-                      ></b-form-input>
-                    </b-form-group>
-                    <b-form-group
-                      label-for="posy"
-                      label="Postion Y"
-                    >
-                      <b-form-input
-                        id="posy"
-                        type="text"
-                        v-model="$store.aktiveElement.y"
-                        @keyup="changeBasic('y', $store.aktiveElement.y)"
-                      ></b-form-input>
-                    </b-form-group>
-                    <b-form-group
-                      label-for="awidth"
-                      label="Breite"
-                    >
-                      <b-form-input
-                        id="awidth"
-                        type="text"
-                        v-model="$store.aktiveElement.width"
-                        @keyup="changeBasic('width', $store.aktiveElement.width)"
-                      ></b-form-input>
-                    </b-form-group>
-                    <b-form-group
-                      label-for="aheight"
-                      label="Höhe"
-                    >
-                      <b-form-input
-                        id="aheight"
-                        type="text"
-                        v-model="$store.aktiveElement.height"
-                        @keyup="changeBasic('height', $store.aktiveElement.height)"
-                      ></b-form-input>
-                    </b-form-group>
-                    <b-form-group
-                      label-for="rotate"
-                      label="drehen"
-                    >
-                      <b-form-input
-                        id="rotate"
-                        type="text"
-                        v-model="rotate"
-                        @keyup="changeRotate()"
-                      ></b-form-input>
-                        <input type="range" min="0" max="360"
-                        v-model="rotate"
-                        @input="changeRotate()">
-                    </b-form-group>
-                    <b-button @click="mirror('x')"
-                    :variant="this.$refs[this.activeElement][0].mirror.x ? 'primary':''"
-                    >spiegeln x</b-button>
-                    <b-button @click="mirror('y')"
-                    :variant="this.$refs[this.activeElement][0].mirror.y ? 'primary':''"
-                    >spiegeln y</b-button>
-                    <b-button @click="lockEL()"
-                    :variant="this.$refs[this.activeElement][0].lockEL ? 'primary':''"
-                    >lock
-                    </b-button>
-                    <div v-for="setting in settings" :key="setting.id">
-                      <b-form-group v-if="setting.type == 'text'"
-                        :label-for="setting.id"
-                        :label="setting.name"
-                      >
-                        <b-form-input
-                          :id="setting.id"
-                          type="text"
-                          v-model="setting.value"
-                          @keyup="changeVal(setting.ref, setting.name, setting.value)"
-                        ></b-form-input>
-                      </b-form-group>
-                      <b-form-group v-if="setting.type == 'option'"
-                        :label-for="setting.id"
-                        :label="setting.name"
-                      >
-                        <b-form-select
-                          :id="setting.id"
-                          v-model="setting.value"
-                          :options="setting.options"
-                          @change="changeVal(setting.ref, setting.name, setting.value)">
-                        </b-form-select>
-                      </b-form-group>
-                      <b-form-group v-if="setting.type == 'number'"
-                        :label-for="setting.id"
-                        :label="setting.name"
-                      >
-                        <b-form-input
-                          :id="setting.id"
-                          type="number"
-                          v-model="setting.value"
-                          @change="changeVal(setting.ref, setting.name, setting.value)"
-                        ></b-form-input>
-                      </b-form-group>
-                      <b-form-group v-if="setting.type == 'file'"
-                        :label-for="setting.id"
-                        :label="setting.name"
-                      >
-                        <input type="file"
-                          @change="changeFile(setting.ref, setting.name, $event.target.files[0])"/>
-                      </b-form-group>
-                      <b-form-group v-if="setting.type == 'color'"
-                        :label-for="setting.id"
-                        :label="setting.name"
-                      >
-                      <Sketch
-                        :value="setting.value"
-                        @input="changeColor($event, setting.ref, setting.name)"
-                      ></Sketch>
-                      </b-form-group>
-                    </div>
-                  </b-card-body>
-                </b-collapse>
-              </b-card>
+              <Settings :activeElement="activeElement" v-if="activeElement"></Settings>
 
               <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" role="tab">
@@ -333,8 +266,9 @@
 import Vue from 'vue';
 import { Drag, Drop, DropList } from 'vue-easy-dnd';
 import { uuid } from 'vue-uuid';
-import { Sketch } from 'vue-color';
-import domtoimage from 'dom-to-image';
+import Transfer from './mixins/transferMixin';
+import Convert from './mixins/convert';
+import Settings from './components/settings.vue';
 import Rechteck from './components/rechteck.vue';
 import TextEL from './components/text.vue';
 import Circle from './components/circle.vue';
@@ -343,11 +277,17 @@ import Band from './components/band.vue';
 
 export default {
   name: 'App',
+  mixins: [Transfer, Convert],
   data: () => ({
     color: '#000',
-    showexport: false,
+    showexportSVG: false,
+    showexportPNG: false,
     shownew: false,
     showsave: false,
+    showload: false,
+    savename: 'Datei',
+    uploaded: false,
+    fileList: [],
     settingsTab: false,
     newFile: { x: 1200, y: 1200 },
     svg: { x: 1200, y: 1200 },
@@ -396,18 +336,16 @@ export default {
         base: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtdi0zNmEzZmIwYz0iIiB3aWR0aD0iMTAwMCIgaGVpZ2h0PSI1MDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIGlkPSJzdmciIGNsYXNzPSJzdmctZHJhdyI+PGcgZGF0YS12LTM2YTNmYjBjPSIiPjxnIGRhdGEtdi0zNmEzZmIwYz0iIj48ZWxsaXBzZSBpZD0iMDlkZDQyMTAtZGRiMC0xMWViLTliOTQtMzc3YTcyYzk0ZWNhIiBjeD0iNTAwIiBjeT0iMjUwIiByeD0iMTAwIiByeT0iMTAwIiBjbGFzcz0iZHJhZyIgc3R5bGU9ImZpbGw6IHJnYigwLCAwLCAwKTsiLz48IS0tLS0+PC9nPjwvZz48L3N2Zz4=',
       },
     ],
-    settings: [],
     layerElements: [],
     activeElement: null,
     cut: [],
-    rotate: 0,
   }
   ),
   components: {
     Drag,
     Drop,
     DropList,
-    Sketch,
+    Settings,
   },
   methods: {
     changeScale(e) {
@@ -435,64 +373,15 @@ export default {
         this.setSettings(element);
       });
     },
-    convertSVG() {
-      this.$actions.toggleResize();
-      Vue.nextTick(() => {
-        const s = new XMLSerializer().serializeToString(this.$refs.svgLayer);
-        const encodedData = window.btoa(s);
-        this.svgexport = `data:image/svg+xml;base64,${encodedData}`;
-        this.$actions.toggleResize();
-      });
-    },
-    convertPNG() {
-      this.$actions.toggleResize();
-      domtoimage.toPng(this.$refs.svgLayer)
-        .then((dataUrl) => {
-          this.pngexport = dataUrl;
-          this.$actions.toggleResize();
-        })
-        .catch(() => {
-          alert('oops, something went wrong!');
-          this.$actions.toggleResize();
-        });
-    },
-    convertJSON() {
-      const jsonsave = [];
-      for (let index = 0; index < this.layerElements.length; index += 1) {
-        const element = this.layerElements[index];
-        element.settings = this.$refs[element.id][0].getSettings(element.id);
-        jsonsave.push(element);
-      }
-      this.json = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(jsonsave))}`;
-    },
-    loadJSON(file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const importJSON = JSON.parse(e.target.result);
-        for (let index = 0; index < importJSON.length; index += 1) {
-          const element = importJSON[index];
-          const el = this.elements.filter((item) => item.name === element.name);
-          this.layerElements.push({
-            id: uuid.v1(),
-            comp: el[0].comp,
-            width: element.width,
-            height: element.height,
-            name: element.name,
-            base: el[0].base,
-            svg: this.$refs.svgLayer,
-            x: element.x,
-            y: element.y,
-          });
-        }
-      };
-      reader.readAsText(file);
-    },
     setSettings(element) {
       for (let i = 0; i < this.layerElements.length; i += 1) {
         this.$refs[this.layerElements[i].id][0].hideHelp();
       }
       this.$refs[element.id][0].showHelp();
-      this.activeElement = element.id;
+      this.activeElement = null;
+      Vue.nextTick(() => {
+        [this.activeElement = 0] = this.$refs[element.id];
+      });
       this.settings = this.$refs[element.id][0].getSettings(element.id);
       this.$actions.changePostion(element.x, element.y);
       this.$actions.changeSize(element.width, element.height);
@@ -504,35 +393,7 @@ export default {
         this.$refs[this.layerElements[i].id][0].hideHelp();
       }
       this.settingsTab = false;
-    },
-    changeBasic(name, val) {
-      this.$refs[this.activeElement][0].n[name] = parseInt(val, 10);
-    },
-    changeRotate() {
-      this.$refs[this.activeElement][0].rotate = this.rotate;
-    },
-    mirror(direction) {
-      if (direction === 'x') {
-        this.$refs[this.activeElement][0].mirrorX();
-      } else {
-        this.$refs[this.activeElement][0].mirrorY();
-      }
-    },
-    lockEL() {
-      this.$refs[this.activeElement][0].lockElement();
-    },
-    changeVal(ref, name, val) {
-      this.$refs[ref][0].changeVal(name, val);
-    },
-    changeFile(ref, name, value) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.$refs[ref][0].changeVal(name, e.target.result);
-      };
-      reader.readAsDataURL(value);
-    },
-    changeColor(val, ref, name) {
-      this.$refs[ref][0].changeVal(name, val);
+      this.activeElement = null;
     },
     deleteElement(element) {
       const pos = this.layerElements.map((object) => (object.id)).indexOf(element.id);
