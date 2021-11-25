@@ -1,4 +1,6 @@
-# client
+# Browser based SVG Editor
+
+Demo: www.webcent.org
 
 ## Project setup
 ```
